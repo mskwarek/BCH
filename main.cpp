@@ -79,7 +79,7 @@
 #include "BCH_codes/Coder.h"
 
 int             i;
-int             recd[1048576], data[1048576], bb[548576];
+int             data[1048576], bb[548576];
 int             numerr, errpos[1024], decerror = 0;
 
 
@@ -99,7 +99,7 @@ void int_print_polynomial(std::string title, std::string polynomial_symbol, int 
 
 int main()
 {
-
+	int* recd = new int [1048576];
 	GfField *gf;
 	gf = new GfField(10);
 
@@ -109,15 +109,22 @@ int main()
 	get_random_data(gf, data);
 
 	Coder c;
-	c.encode_bch(gf, data, bb);           /* encode data */
+	c.encode_bch(data, bb);           /* encode data */
 
-	c.code_polynomial(gf->get_code_length(), gf->get_k(), data, bb, recd);
+	c.code_polynomial(data, bb, recd);
 
 	int_print_polynomial("Code polynomial:", "c(x)", recd, 0, gf->get_code_length());
 
 	int_rand_errors(gf, 9);
+	if(9)
+	{
+		for (i = 0; i < numerr; i++)
+			recd[errpos[i]] ^= 1;
 
-	c.decode_bch(gf, recd);
+		int_print_polynomial("r(x)", "r(x)", recd, 0, gf->get_code_length());
+	}
+
+	c.decode_bch(recd);
 
 
 	/*
@@ -160,11 +167,6 @@ void int_rand_errors(GfField *gf, int err)
 	}
 	else
 		int_rand_errors_position(gf);
-	if (numerr)
-		for (i = 0; i < numerr; i++)
-			recd[errpos[i]] ^= 1;
-
-	int_print_polynomial("r(x)", "r(x)", recd, 0, gf->get_code_length());
 }
 
 void int_rand_errors_position(GfField *gf)

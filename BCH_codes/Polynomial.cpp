@@ -42,11 +42,11 @@ public:
     {
         int			i, ninf;
 
-        printf("bch3: An encoder/decoder for binary BCH codes\n");
-        printf("Copyright (c) 1994-7. Robert Morelos-Zaragoza.\n");
-        printf("This program is free, please read first the copyright notice.\n");
-        printf("\nFirst, enter a value of m such that the code length is\n");
-        printf("2**(m-1) - 1 < length <= 2**m - 1\n\n");
+//        printf("bch3: An encoder/decoder for binary BCH codes\n");
+//        printf("Copyright (c) 1994-7. Robert Morelos-Zaragoza.\n");
+//        printf("This program is free, please read first the copyright notice.\n");
+//        printf("\nFirst, enter a value of m such that the code length is\n");
+//        printf("2**(m-1) - 1 < length <= 2**m - 1\n\n");
         degree = degree_;
         do {
             if(degree_ == 0) {
