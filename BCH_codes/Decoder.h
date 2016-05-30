@@ -17,7 +17,7 @@ private:
     int s[1025];
     int t2;
     GfField *gf_field;
-
+    void int_correct_errors(int elp[][1024], int u, int *l, int q, int *cx_coefficients);
 public:
     Decoder(GfField *gf);
     void form_syndromes(int* cx_coefficients);

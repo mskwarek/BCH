@@ -37,6 +37,21 @@ int* GfField::get_polynomial_form()
     return polynomial->get_form();
 }
 
+int GfField::get_n()
+{
+    return polynomial->get_n();
+}
+
+int* GfField::get_index_of()
+{
+    return index_of;
+}
+
+int* GfField::get_alpha()
+{
+    return alpha_to;
+}
+
 void GfField::generate_gf()
 /*
  * Generate field GF(2**m) from the irreducible polynomial p(X) with
@@ -242,7 +257,7 @@ void GfField::form_new_elp(int u, int q, int elp[][1024], int *l, int t2, int *x
     }
 }
 
-void GfField::form_discrepancy(int *s, int u, int *x, int *l, int elp[][1024])
+void GfField::form_discrepancy(int *s, int u, int *x, int *l, int error_location_polynomial[][1024])
 {
     int i = 0;
     /* no discrepancy computed on last iteration */
@@ -251,9 +266,9 @@ void GfField::form_discrepancy(int *s, int u, int *x, int *l, int elp[][1024])
     else
         x[u + 1] = 0;
     for (i = 1; i <= l[u + 1]; i++)
-        if ((s[u + 1 - i] != -1) && (elp[u + 1][i] != 0))
+        if ((s[u + 1 - i] != -1) && (error_location_polynomial[u + 1][i] != 0))
             x[u + 1] ^= alpha_to[(s[u + 1 - i]
-                                  + index_of[elp[u + 1][i]]) % polynomial->get_n()];
+                                  + index_of[error_location_polynomial[u + 1][i]]) % polynomial->get_n()];
     /* put d[u+1] into index form */
     x[u + 1] = index_of[x[u + 1]];
 }
@@ -271,46 +286,3 @@ void GfField::store_new_elp(int *l, int q, int u)
         l[u + 1] = l[q] + u - q;
 }
 
-void GfField::correct_errors(int elp[][1024], int u, int *l, int q, int *cx_coefficients)
-{
-    int             root[200], loc[200], err[1024], reg[201];
-    int count = 0;
-    int j = 0;
-    int i = 0;
-    /* put elp into index form */
-    for (i = 0; i <= l[u]; i++)
-        elp[u][i] = index_of[elp[u][i]];
-
-    printf("sigma(x) = ");
-    for (i = 0; i <= l[u]; i++)
-        printf("%3d ", elp[u][i]);
-    printf("\n");
-    printf("Roots: ");
-
-    /* Chien search: find roots of the error location polynomial */
-    for (i = 1; i <= l[u]; i++)
-        reg[i] = elp[u][i];
-    count = 0;
-    for (i = 1; i <= polynomial->get_n(); i++) {
-        q = 1;
-        for (j = 1; j <= l[u]; j++)
-            if (reg[j] != -1) {
-                reg[j] = (reg[j] + j) % polynomial->get_n();
-                q ^= alpha_to[reg[j]];
-            }
-        if (!q) {	/* store root and error
-                     * location number indices */
-            root[count] = i;
-            loc[count] = polynomial->get_n() - i;
-            count++;
-            printf("%3d ", polynomial->get_n() - i);
-        }
-    }
-    printf("\n");
-    if (count == l[u])
-        /* no. roots = degree of elp hence <= t errors */
-        for (i = 0; i < l[u]; i++)
-            cx_coefficients[loc[i]] ^= 1;
-    else	/* elp has degree >t hence cannot solve */
-        printf("Incomplete decoding: errors detected\n");
-}

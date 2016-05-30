@@ -79,7 +79,56 @@ void Decoder::try_to_correct_errors(int* cx_coefficients)
 
         u++;
         if (l[u] <= gf_field->get_error_code_capability()) {/* Can correct errors */
-            gf_field->correct_errors(error_location_polynomial, u, l, q, cx_coefficients);
+            int_correct_errors(error_location_polynomial, u, l, q, cx_coefficients);
         }
     }
+}
+
+void Decoder::int_correct_errors(int elp[][1024], int u, int *l, int q, int *cx_coefficients)
+{
+    int             root[200], loc[200], err[1024], reg[201];
+    int count = 0;
+    int j = 0;
+    int i = 0;
+    int *index_of = gf_field->get_index_of();
+    int *alpha = gf_field->get_alpha();
+    /* put elp into index form */
+    for (i = 0; i <= l[u]; i++)
+        elp[u][i] = index_of[elp[u][i]];
+
+
+
+    /* Chien search: find roots of the error location polynomial */
+    for (i = 1; i <= l[u]; i++)
+        reg[i] = elp[u][i];
+    count = 0;
+    for (i = 1; i <= gf_field->get_n(); i++) {
+        q = 1;
+        for (j = 1; j <= l[u]; j++)
+            if (reg[j] != -1) {
+                reg[j] = (reg[j] + j) % gf_field->get_n();
+                q ^= alpha[reg[j]];
+            }
+        if (!q) {	/* store root and error
+                     * location number indices */
+            root[count] = i;
+            loc[count] = gf_field->get_n() - i;
+            count++;
+        }
+    }
+    printf("\n");
+    printf("sigma(x) = ");
+    for (i = 0; i <= l[u]; i++)
+        printf("%3d ", elp[u][i]);
+    printf("\n");
+    printf("Roots: ");
+    for (i = 0; i < count; ++i)
+        printf("%3d ", loc[i]);
+    printf("\n");
+    if (count == l[u])
+        /* no. roots = degree of elp hence <= t errors */
+        for (i = 0; i < l[u]; i++)
+            cx_coefficients[loc[i]] ^= 1;
+    else	/* elp has degree >t hence cannot solve */
+        printf("Incomplete decoding: errors detected\n");
 }
