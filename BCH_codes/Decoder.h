@@ -5,7 +5,7 @@
 #ifndef BCH_DECODER_H
 #define BCH_DECODER_H
 
-#include "GfField.cpp"
+#include "GfField.h"
 
 class Decoder {
 private:
@@ -13,7 +13,7 @@ private:
     int j = 0;
     int u = 0;
     int q = 0;
-    int             elp[1026][1024], x[1026], l[1026], u_lu[1026];
+    int             error_location_polynomial[1026][1024], x[1026], l[1026], u_lu[1026];
     int s[1025];
     int t2;
     GfField *gf_field;

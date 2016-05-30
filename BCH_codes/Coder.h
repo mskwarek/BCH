@@ -6,14 +6,13 @@
 #define BCH_CODER_H
 
 #include "Decoder.h"
+#include "Encoder.h"
 
 class Coder {
 private:
     GfField *gf_field;
     Decoder *decoder;
-    bool int_is_source_different_from_coding_result(int source_data, int coding_result);
-    void int_code_if_different(int* coding_result);
-    void int_code_if_compatible(int* coding_result);
+    Encoder *encoder;
 public:
     Coder();
     ~Coder();

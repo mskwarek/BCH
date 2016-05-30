@@ -10,6 +10,8 @@
       <sourceFolder url="file://$MODULE_DIR$/BCH_codes/Encoder.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/BCH_codes/Coder.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/BCH_codes/Coder.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/BCH_codes/Polynomial.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/BCH_codes/GfField.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/BCH_codes/GfField.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/BCH_codes/Decoder.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
