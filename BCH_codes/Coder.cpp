@@ -89,7 +89,7 @@ void Coder::decode_bch(int* const cx_coefficients)
 }
 
 
-void Coder::print_decoding_result(int* data, int* recd)
+int Coder::get_decoding_error_number(int *data, int *recd)
 {
     int decerror = 0;
     for (int i = gf_field->get_code_length() - gf_field->get_k(); i < gf_field->get_code_length(); i++)

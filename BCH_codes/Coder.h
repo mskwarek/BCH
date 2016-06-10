@@ -22,7 +22,7 @@ public:
     void encode_bch(int *source_data, int *coding_result);
     void decode_bch(int* const cx_coefficients);
     void code_polynomial(int* source_data, int* bb, int* destination);
-    void print_decoding_result(int* data, int* recd);
+    int get_decoding_error_number(int *data, int *recd);
 };
 
 

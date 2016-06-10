@@ -64,7 +64,7 @@ TEST_F(BCHCodingTest, Check)
     for (int i = 0; i < 9; i++)
         recd[error_position[i]] ^= 1;
     c->decode_bch(recd);
-    c->print_decoding_result(data, recd);
+    c->get_decoding_error_number(data, recd);
 //    for (int i = 0; i < 1024; i++)
 //        EXPECT_EQ(data[i], recd[i]);
 }
