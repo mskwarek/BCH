@@ -16,6 +16,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5da7a387-be1a-47f9-835c-134968d01603" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/BCH_codes/Coder.cpp" afterPath="$PROJECT_DIR$/BCH_codes/Coder.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/BCH_codes/Decoder.cpp" afterPath="$PROJECT_DIR$/BCH_codes/Decoder.cpp" />
     </list>
     <ignored path="BCH.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -36,11 +38,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="runBasicTests.cpp" pinned="false" current-in-tab="true">
+      <file leaf-file-name="runBasicTests.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bch_tests/runBasicTests.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+            <state relative-caret-position="411">
+              <caret line="52" column="35" selection-start-line="52" selection-start-column="35" selection-end-line="52" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -66,11 +68,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Coder.cpp" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Coder.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/BCH_codes/Coder.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="882">
-              <caret line="55" column="14" selection-start-line="55" selection-start-column="14" selection-end-line="55" selection-end-column="14" />
+            <state relative-caret-position="270">
+              <caret line="42" column="36" selection-start-line="42" selection-start-column="36" selection-end-line="42" selection-end-column="36" />
               <folding>
                 <element signature="e#1330#2277#0" expanded="false" />
               </folding>
@@ -81,8 +83,8 @@
       <file leaf-file-name="Decoder.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/BCH_codes/Decoder.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2070">
-              <caret line="115" column="20" selection-start-line="115" selection-start-column="20" selection-end-line="115" selection-end-column="20" />
+            <state relative-caret-position="378">
+              <caret line="30" column="17" selection-start-line="30" selection-start-column="17" selection-end-line="30" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -158,10 +160,8 @@
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/bch_tests/test_cases.h" />
         <option value="$PROJECT_DIR$/main.cpp" />
-        <option value="$PROJECT_DIR$/bch_tests/runBasicTests.cpp" />
         <option value="$PROJECT_DIR$/BCH_codes/Coder.h" />
         <option value="$PROJECT_DIR$/BCH_codes/Encoder.cpp" />
-        <option value="$PROJECT_DIR$/BCH_codes/Coder.cpp" />
         <option value="$PROJECT_DIR$/BCH_codes/Polynomial.h" />
         <option value="$PROJECT_DIR$/BCH_codes/Encoder.h" />
         <option value="$PROJECT_DIR$/BCH_codes/Polynomial.cpp" />
@@ -169,6 +169,8 @@
         <option value="$PROJECT_DIR$/BCH_codes/GfField.h" />
         <option value="$PROJECT_DIR$/BCH_codes/Decoder.h" />
         <option value="$PROJECT_DIR$/BCH_codes/Decoder.cpp" />
+        <option value="$PROJECT_DIR$/bch_tests/runBasicTests.cpp" />
+        <option value="$PROJECT_DIR$/BCH_codes/Coder.cpp" />
       </list>
     </option>
   </component>
@@ -942,21 +944,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/BCH_codes/Decoder.cpp">
+    <entry file="file://$PROJECT_DIR$/BCH_codes/Decoder.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2070">
-          <caret line="115" column="20" selection-start-line="115" selection-start-column="20" selection-end-line="115" selection-end-column="20" />
+        <state relative-caret-position="342">
+          <caret line="19" column="89" selection-start-line="19" selection-start-column="89" selection-end-line="19" selection-end-column="89" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/BCH_codes/Coder.cpp">
+    <entry file="file://$PROJECT_DIR$/BCH_codes/Decoder.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="882">
-          <caret line="55" column="14" selection-start-line="55" selection-start-column="14" selection-end-line="55" selection-end-column="14" />
-          <folding>
-            <element signature="e#1330#2277#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="378">
+          <caret line="30" column="17" selection-start-line="30" selection-start-column="17" selection-end-line="30" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bch_tests/runBasicTests.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="411">
+          <caret line="52" column="35" selection-start-line="52" selection-start-column="35" selection-end-line="52" selection-end-column="35" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -976,19 +984,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/BCH_codes/Decoder.h">
+    <entry file="file://$PROJECT_DIR$/BCH_codes/Coder.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="19" column="89" selection-start-line="19" selection-start-column="89" selection-end-line="19" selection-end-column="89" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bch_tests/runBasicTests.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="270">
+          <caret line="42" column="36" selection-start-line="42" selection-start-column="36" selection-end-line="42" selection-end-column="36" />
+          <folding>
+            <element signature="e#1330#2277#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

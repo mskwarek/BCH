@@ -91,9 +91,8 @@ void Coder::decode_bch(int* const cx_coefficients)
 
 void Coder::print_decoding_result(int* data, int* recd)
 {
-    int i = 0;
     int decerror = 0;
-    for (i = gf_field->get_code_length() - gf_field->get_k(); i < gf_field->get_code_length(); i++)
+    for (int i = gf_field->get_code_length() - gf_field->get_k(); i < gf_field->get_code_length(); i++)
         if (data[i - gf_field->get_code_length() + gf_field->get_k()] != recd[i])
             decerror++;
     if (decerror)

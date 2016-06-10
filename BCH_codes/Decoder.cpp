@@ -8,6 +8,16 @@ Decoder::Decoder(GfField *gf)
 {
     gf_field = gf;
     t2 = gf_field->get_error_code_capability() *2;
+
+}
+
+void Decoder::form_syndromes(int* cx_coefficients)
+{
+    gf_field->form_syndromes(s, cx_coefficients);
+}
+
+void Decoder::try_to_correct_errors(int* cx_coefficients)
+{
     x[0] = 0;			/* index form */
     x[1] = s[1];		/* index form */
     error_location_polynomial[0][0] = 0;		/* index form */
@@ -21,15 +31,7 @@ Decoder::Decoder(GfField *gf)
     u_lu[0] = -1;
     u_lu[1] = 0;
     u = 0;
-}
 
-void Decoder::form_syndromes(int* cx_coefficients)
-{
-    gf_field->form_syndromes(s, cx_coefficients);
-}
-
-void Decoder::try_to_correct_errors(int* cx_coefficients)
-{
     if (gf_field->is_syn_error())
     {	/* if there are errors, try to correct them */
         /*
