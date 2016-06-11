@@ -75,8 +75,10 @@
 #include <cstdlib>
 #include <ctime>
 #include <string>
+#include <iostream>
 
 #include "BCH_codes/Coder.h"
+#include "BCH_codes/GfField.h"
 
 int             i;
 int             data[1048576], bb[548576];

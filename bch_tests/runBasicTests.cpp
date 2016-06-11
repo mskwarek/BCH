@@ -2,7 +2,7 @@
 // Created by marcin on 01.05.16.
 //
 #include <gtest/gtest.h>
-#include "Coder.h"
+#include "../BCH_codes/Coder.h"
 #include "test_cases.h"
 
 class BCHCodingTest : public testing::Test
