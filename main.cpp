@@ -76,83 +76,71 @@
 #include <ctime>
 #include <string>
 #include <iostream>
+#include <map>
 
 #include "BCH_codes/Coder.h"
 #include "BCH_codes/GfField.h"
+#include "BCH_codes/Config.h"
 
 int             i;
-int             data[1048576], bb[548576];
-int             numerr, errpos[1024], decerror = 0;
+int             data[1048576];
+int             numerr, errpos[1024];
 
+void int_rand_errors(Coder *c, int err = 0);
+void int_rand_errors_position(Coder *c);
+void int_print_polynomial(std::string title, std::string polynomial_symbol, int *data, int start, int length);
 
-void get_random_data(GfField *gf, int *data_destination)
+void get_random_data(int k, int *data_destination)
 {
 	int             seed;
 	/* Randomly generate DATA */
 	seed = 131073;
 	srandom(seed);
-	for (int i = 0; i < gf->get_k(); i++)
+	for (int i = 0; i < k; i++)
 		data_destination[i] = ( random() & 65536 ) >> 16;
 }
 
-void int_rand_errors(GfField *gf, int err = 0);
-void int_rand_errors_position(GfField *gf);
-void int_print_polynomial(std::string title, std::string polynomial_symbol, int *data, int start, int length);
 
 int main()
 {
+        Config cnf;
+	cnf.load("config.xml");
+        std::map<std::string, std::string> codes_features = cnf.getDatabaseInfo();
 	int* recd = new int [1048576];
-	GfField *gf;
-	gf = new GfField(10);
+	int bb[548576];
+	int poly_degree = std::stoi(codes_features["polynomial_degree"]);
+	int correction_cap = std::stoi(codes_features["correction_capabilities"]);
+	Coder* c = new Coder(poly_degree, correction_cap);
+	get_random_data(c->get_k(), data);
+	c->encode_bch(data, bb);
+	c->code_polynomial(data, bb, recd);
+	
+	int_print_polynomial("Code polynomial:", "c(x)", recd, 0, c->get_code_length());
 
-	gf->generate_gf();          /* Construct the Galois Field GF(2**m) */
-	gf->gen_poly(18);             /* Compute the generator polynomial of BCH code */
-
-	get_random_data(gf, data);
-
-	Coder c;
-	c.encode_bch(data, bb);           /* encode data */
-
-	c.code_polynomial(data, bb, recd);
-
-	int_print_polynomial("Code polynomial:", "c(x)", recd, 0, gf->get_code_length());
-
-	int_rand_errors(gf, 9);
+	int_rand_errors(c, 9);
 	if(9)
 	{
 		for (i = 0; i < numerr; i++)
 			recd[errpos[i]] ^= 1;
 
-		int_print_polynomial("r(x)", "r(x)", recd, 0, gf->get_code_length());
+		int_print_polynomial("r(x)", "r(x)", recd, 0, c->get_code_length());
 	}
+	c->decode_bch(recd);
 
-	c.decode_bch(recd);
 
-
-	/*
-	 * print out original and decoded data
-	 */
 	printf("Results:\n");
-	int_print_polynomial("original data:", "send(x)", data, 0, gf->get_k());
-	int_print_polynomial("recovered data:", "recovered(x)", recd, gf->get_code_length() - gf->get_k(), gf->get_code_length());
+	int_print_polynomial("original data:", "send(x)", data, 0, c->get_k());
+	int_print_polynomial("recovered data:", "recovered(x)", recd, c->get_code_length() - c->get_k(), c->get_code_length());
 
+	c->get_decoding_error_number(data, recd);
 
-	/*
-	 * DECODING ERRORS? we compare only the data portion
-	 */
-	for (i = gf->get_code_length() - gf->get_k(); i < gf->get_code_length(); i++)
-		if (data[i - gf->get_code_length() + gf->get_k()] != recd[i])
-			decerror++;
-	if (decerror)
-	   printf("There were %d decoding errors in message positions\n", decerror);
-	else
-	   printf("Succesful decoding\n");
+	delete c;
 	return 0;
 }
 
 
 
-void int_rand_errors(GfField *gf, int err)
+void int_rand_errors(Coder *c, int err)
 {
 	numerr = err;
 	if(err==0) {
@@ -160,7 +148,7 @@ void int_rand_errors(GfField *gf, int err)
 		scanf("%d", &numerr);    /* CHANNEL errors */
 
 		printf("Enter error locations (integers between");
-		printf(" 0 and %d): ", gf->get_code_length() - 1);
+		printf(" 0 and %d): ", c->get_code_length() - 1);
 		/*
 		 * recd[] are the coefficients of r(x) = c(x) + e(x)
 		 */
@@ -168,10 +156,10 @@ void int_rand_errors(GfField *gf, int err)
 			scanf("%d", &errpos[i]);
 	}
 	else
-		int_rand_errors_position(gf);
+		int_rand_errors_position(c);
 }
 
-void int_rand_errors_position(GfField *gf)
+void int_rand_errors_position(Coder *c)
 {
 	srand( time(NULL));
 	int tmp = 0;
@@ -179,7 +167,7 @@ void int_rand_errors_position(GfField *gf)
 	for (i = 0; i < numerr; )
 	{
 		int flag = 0;
-		tmp = rand() % gf->get_code_length();
+		tmp = rand() % c->get_code_length();
 		for (int j = 0; j < numerr; ++j)
 			if(errpos[j] == tmp)
 				flag = 1;

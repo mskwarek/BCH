@@ -4,11 +4,11 @@
 
 #include "Coder.h"
 
-Coder::Coder()
+Coder::Coder(int polynomial_degree, int error_correct_capability)
 {
-    gf_field = new GfField(10);
+    gf_field = new GfField(polynomial_degree);
     gf_field->generate_gf();
-    gf_field->gen_poly(15);
+    gf_field->gen_poly(error_correct_capability);
 
     decoder = new Decoder(gf_field);
     encoder = new Encoder(gf_field);
@@ -99,4 +99,10 @@ int Coder::get_decoding_error_number(int *data, int *recd)
         printf("There were %d decoding errors in message positions\n", decerror);
     else
         printf("Succesful decoding\n");
+    return decerror;
+}
+
+int Coder::get_k()
+{
+  return gf_field->get_k();
 }

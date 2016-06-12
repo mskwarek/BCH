@@ -14,7 +14,7 @@ public:
     BCHCodingTest()
     {
 
-        c = new Coder();
+      c = new Coder(10, 15);
     }
 
     virtual ~BCHCodingTest()
@@ -64,9 +64,9 @@ TEST_F(BCHCodingTest, Check)
     for (int i = 0; i < 9; i++)
         recd[error_position[i]] ^= 1;
     c->decode_bch(recd);
-    c->get_decoding_error_number(data, recd);
-//    for (int i = 0; i < 1024; i++)
-//        EXPECT_EQ(data[i], recd[i]);
+    EXPECT_EQ(c->get_decoding_error_number(data, recd), 0);
+    //    for (int i = 0; i < 1024; i++)
+    //  EXPECT_EQ(data[i], recd[i]);
 }
 
 int main(int ac, char* av[])

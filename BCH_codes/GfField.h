@@ -15,11 +15,19 @@ class GfField
 {
 private:
     int             alpha_to[1048576], index_of[1048576], g[548576];
+    int cycle[1024][21];
     int k = 0; /* dafuq is this */
     int d = 0; /* jw */
+    int rdncy = 0;
+    int nocycles = 0;
     int error_code_capability = 0;
     Polynomial *polynomial;
     int syn_error = 0;
+    void int_generate_next_cycle_set(int *size, int cycle_set_index);
+    void int_compute_generator_polynomial(int* zeros);
+    void int_search_for_cycle_sets_roots(int *size, int* zeros);
+    void int_generate_cycle_set();
+    void int_generate_cycle_sets_mod_n(int *size);
 public:
     GfField(int poly_degree);
     int* get_generated_poly();
@@ -38,6 +46,10 @@ public:
     void form_new_elp(int u, int q, int elp[][1024], int *l, int t2, int *x);
     void form_discrepancy(int *s, int u, int *x, int *l, int error_location_polynomial[][1024]);
     void store_new_elp(int *l, int q, int u);
+    void print_generator_polynomial();
+    void print_error_code_capability();
+    void print_bch_code_features();
+    void print_syndromes_features(int *s);
 };
 
 

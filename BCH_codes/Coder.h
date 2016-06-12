@@ -14,11 +14,12 @@ private:
     Decoder *decoder;
     Encoder *encoder;
 public:
-    Coder();
+    Coder(int polynomial_degree, int error_correct_capability);
     ~Coder();
     int* get_generated_polynomial();
     int* get_polynomial_form();
     int get_code_length();
+    int get_k();
     void encode_bch(int *source_data, int *coding_result);
     void decode_bch(int* const cx_coefficients);
     void code_polynomial(int* source_data, int* bb, int* destination);
