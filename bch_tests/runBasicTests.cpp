@@ -4,23 +4,21 @@
 #include <gtest/gtest.h>
 #include "../BCH_codes/Coder.h"
 #include "test_cases.h"
+#include <memory>
 
 class BCHCodingTest : public testing::Test
 {
 public:
 
-    Coder *c;
+    std::unique_ptr<Coder> c;
 
     BCHCodingTest()
     {
-
-      c = new Coder(10, 15);
+      c = std::unique_ptr<Coder>(new Coder(10, 15));
     }
 
     virtual ~BCHCodingTest()
-    {
-        delete c;
-    }
+    {}
 };
 
 TEST_F(BCHCodingTest, CheckPolynomialForm)

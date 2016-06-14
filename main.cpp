@@ -103,9 +103,9 @@ void get_random_data(int k, int *data_destination)
 
 int main()
 {
-        Config cnf;
+	Config cnf;
 	cnf.load("config.xml");
-        std::map<std::string, std::string> codes_features = cnf.getDatabaseInfo();
+	std::map<std::string, std::string> codes_features = cnf.getDatabaseInfo();
 	int* recd = new int [1048576];
 	int bb[548576];
 	int poly_degree = std::stoi(codes_features["polynomial_degree"]);
@@ -150,9 +150,6 @@ void int_rand_errors(Coder *c, int err)
 
 		printf("Enter error locations (integers between");
 		printf(" 0 and %d): ", c->get_code_length() - 1);
-		/*
-		 * recd[] are the coefficients of r(x) = c(x) + e(x)
-		 */
 		for (i = 0; i < numerr; i++)
 			scanf("%d", &errpos[i]);
 	}
@@ -188,7 +185,7 @@ void int_print_polynomial(std::string title, std::string polynomial_symbol, int 
 	for (i = start; i < length; i++) {
 		printf("%1d", data[i]);
 		if (i && ((i % 50) == 0))
-			printf("\n");
+			std::cout<<std::endl;
 	}
-	printf("\n");
+	std::cout<<std::endl;
 }

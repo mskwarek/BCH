@@ -8,7 +8,6 @@ GfField::GfField(int poly_degree)
     
     cycle[0][0] = 0;
     cycle[1][0] = 1;
-
 }
 
 int* GfField::get_generated_poly()
