@@ -110,6 +110,7 @@ int main()
 	int bb[548576];
 	int poly_degree = std::stoi(codes_features["polynomial_degree"]);
 	int correction_cap = std::stoi(codes_features["correction_capabilities"]);
+	int error_num = std::stoi(codes_features["number_of_errors"]);
 	Coder* c = new Coder(poly_degree, correction_cap);
 	get_random_data(c->get_k(), data);
 	c->encode_bch(data, bb);
@@ -117,8 +118,8 @@ int main()
 	
 	int_print_polynomial("Code polynomial:", "c(x)", recd, 0, c->get_code_length());
 
-	int_rand_errors(c, 9);
-	if(9)
+	int_rand_errors(c, error_num);
+	if(error_num)
 	{
 		for (i = 0; i < numerr; i++)
 			recd[errpos[i]] ^= 1;

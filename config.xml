@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bch>
+  <number_od_errors>8</number_od_errors>
+  <polynomial_degree>10</polynomial_degree>
+  <correction_capabilities>20</correction_capabilities>
+</bch>
