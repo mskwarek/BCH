@@ -4,16 +4,20 @@
 
 #include "Encoder.h"
 
-Encoder::Encoder(GfField *gf)
+Encoder::Encoder(std::shared_ptr<GfField> gf)
 {
     gf_field = gf;
 }
 
+/*
+ * Compute redundacy bb[], the coefficients of b(x). The redundancy
+ * polynomial b(x) is the remainder after dividing x^(length-k)*data(x)
+ * by the generator polynomial g(x).
+ */
 void Encoder::encode(int *source_data, int *coding_result)
 {
     register int    i;
     int k = gf_field->get_k();
-
 
     for (i = 0; i < gf_field->get_code_length() - k; i++)
         coding_result[i] = 0;

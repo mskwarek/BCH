@@ -5,7 +5,7 @@
 #include "Decoder.h"
 #include <iostream>
 
-Decoder::Decoder(GfField *gf)
+Decoder::Decoder(std::shared_ptr<GfField> gf)
 {
     gf_field = gf;
     t2 = gf_field->get_error_code_capability() *2;
@@ -13,13 +13,23 @@ Decoder::Decoder(GfField *gf)
 
 void Decoder::form_syndromes(int* cx_coefficients)
 {
-    gf_field->form_syndromes(s, cx_coefficients);
+    int t2 = 2 * gf_field->get_error_code_capability();
+
+    for (int i = 1; i <= t2; i++) {
+        s[i] = 0;
+        for (int j = 0; j < gf_field->get_code_length(); j++)
+            if (cx_coefficients[j] != 0)
+                s[i] ^= gf_field->get_alpha()[(i * j) % gf_field->get_n()];
+
+        s[i] = gf_field->get_index_of()[s[i]];
+    }
 }
+
 
 void Decoder::try_to_correct_errors(int* cx_coefficients)
 {
   int_init_decoder_variables();
-  if (gf_field->is_syn_error())
+  if (int_is_syndrom_null())
   {
     int_compute_error_location_polynomial();
     if (this->int_can_correct_errors()) 
@@ -29,42 +39,40 @@ void Decoder::try_to_correct_errors(int* cx_coefficients)
   }
 }
 
-/*
- * Compute the error location polynomial via the Berlekamp
- * iterative algorithm. Following the terminology of Lin and
- * Costello's book :   d[u] is the 'mu'th discrepancy, where
- * u='mu'+1 and 'mu' (the Greek letter!) is the step number
- * ranging from -1 to 2*t (see L&C),  l[u] is the degree of
- * the elp at that step, and u_l[u] is the difference between
- * the step number and the degree of the elp.
- */
+bool Decoder::int_is_syndrom_null()
+{
+    for(int i = 0; i < 2 * gf_field->get_error_code_capability(); i++)
+        if (s[i] != 0)
+            return true;
+
+    return false;
+}
+
 void Decoder::int_compute_error_location_polynomial()
 {
-  do {
-    step_number++;
-    if (x[step_number] == -1) 
-      {
-	gf_field->cos_tam(elp_degree, step_number, error_location_polynomial);
-      } 
-    else
-      {
-	int_search_for_greatest_one();
-      }
-    u_lu[step_number + 1] = step_number - elp_degree[step_number + 1];
+    do {
+        step_number++;
+        if (x[step_number] == -1)
+        {
+	        int_cos_tam();
+        }
+        else
+        {
+	        int_search_for_greatest_one();
+        }
+        u_lu[step_number + 1] = step_number - elp_degree[step_number + 1];
 
-    /* form (u+1)th discrepancy */
-    if (step_number < t2) {
-      gf_field->form_discrepancy(s, step_number, x, elp_degree, error_location_polynomial);
+        /* form (u+1)th discrepancy */
+        if (step_number < t2)
+        {
+            int_form_discrepancy();
+        }
     }
-  } while ((step_number < t2) && (elp_degree[step_number + 1] <= gf_field->get_error_code_capability()));
+    while ((step_number < t2) && (elp_degree[step_number + 1] <= gf_field->get_error_code_capability()));
   
   step_number++;
 }
 
-/*
- * search for words with greatest u_lu[q] for
- * which d[q]!=0
- */
 void Decoder::int_search_for_greatest_one()
 {
   int j = 0;
@@ -81,8 +89,8 @@ void Decoder::int_search_for_greatest_one()
     } while (j > 0);
   }
   
-  gf_field->store_new_elp(elp_degree, q, step_number);
-  gf_field->form_new_elp(step_number, q, error_location_polynomial, elp_degree, t2, x);
+  int_store_new_elp();
+  int_form_new_elp();
 }
 
 bool Decoder::int_can_correct_errors()
@@ -109,20 +117,18 @@ void Decoder::int_init_decoder_variables()
 
 void Decoder::int_correct_errors(int *cx_coefficients)
 {
-    int *index_of = int_put_elp_into_index_form();
-    int_find_elp_roots(root, loc);
+    int_put_elp_into_index_form();
+    int_find_elp_roots();
 
-    print_sigma();
-    print_roots();
     try
-      {
-	int_correct_error_bits(cx_coefficients);
-      }
+    {
+	    int_correct_error_bits(cx_coefficients);
+    }
     catch(...)
-      {
-	/* elp has degree >t hence cannot solve */
+    {
+	    /* elp has degree >t hence cannot solve */
         printf("Incomplete decoding: errors detected\n");
-      }
+    }
 }
 
 void Decoder::print_sigma()
@@ -144,7 +150,6 @@ void Decoder::print_roots()
 void Decoder::int_correct_error_bits(int *cx_coefficients)
 {
   if (root_counter == elp_degree[step_number])
-    /* no. roots = degree of elp hence <= t errors */
     for (int i = 0; i < elp_degree[step_number]; i++)
       cx_coefficients[loc[i]] ^= 1;
   else
@@ -161,7 +166,7 @@ int* Decoder::int_put_elp_into_index_form()
 
 }
 
-void Decoder::int_find_elp_roots(int* root, int* loc)
+void Decoder::int_find_elp_roots()
 {
     int *alpha = gf_field->get_alpha();
     int  reg[201];
@@ -183,4 +188,61 @@ void Decoder::int_find_elp_roots(int* root, int* loc)
             root_counter++;
         }
     }
+}
+
+void Decoder::int_cos_tam()
+{
+    elp_degree[step_number + 1] = elp_degree[step_number];
+    for (int i = 0; i <= elp_degree[step_number]; i++) {
+        error_location_polynomial[step_number + 1][i] = error_location_polynomial[step_number][i];
+        error_location_polynomial[step_number][i] = gf_field->get_index_of()[error_location_polynomial[step_number][i]];
+    }
+}
+
+void Decoder::int_form_new_elp()
+{
+    /* form new elp(x) */
+    for (int i = 0; i < t2; i++)
+        error_location_polynomial[step_number + 1][i] = 0;
+    for (int i = 0; i <= elp_degree[q]; i++)
+        if (error_location_polynomial[q][i] != -1)
+            error_location_polynomial[step_number + 1][i + step_number - q] =
+                    gf_field->get_alpha()[(x[step_number] + gf_field->get_n() - x[q] + error_location_polynomial[q][i]) % gf_field->get_n()];
+    for (int i = 0; i <= elp_degree[step_number]; i++) {
+        error_location_polynomial[step_number + 1][i] ^= error_location_polynomial[step_number][i];
+        error_location_polynomial[step_number][i] = gf_field->get_index_of()[error_location_polynomial[step_number][i]];
+    }
+}
+
+void Decoder::int_form_discrepancy()
+{
+    /* no discrepancy computed on last iteration */
+    if (s[step_number + 1] != -1)
+        x[step_number + 1] = gf_field->get_alpha()[s[step_number + 1]];
+    else
+        x[step_number + 1] = 0;
+    for (int i = 1; i <= elp_degree[step_number + 1]; i++)
+        if ((s[step_number + 1 - i] != -1) && (error_location_polynomial[step_number + 1][i] != 0))
+            x[step_number + 1] ^= gf_field->get_alpha()[(s[step_number + 1 - i]
+                                  + gf_field->get_index_of()[error_location_polynomial[step_number + 1][i]]) % gf_field->get_n()];
+    /* put d[u+1] into index form */
+    x[step_number + 1] = gf_field->get_index_of()[x[step_number + 1]];
+}
+
+void Decoder::int_store_new_elp()
+{
+    if (elp_degree[step_number] > elp_degree[q] + step_number - q)
+        elp_degree[step_number + 1] = elp_degree[step_number];
+    else
+        elp_degree[step_number + 1] = elp_degree[q] + step_number - q;
+}
+
+void Decoder::print_syndromes_features()
+{
+    std::cout<<"t2 = "<<2 * gf_field->get_error_code_capability()<<std::endl;
+    std::cout<<"S(x) = ";
+    for (int i=0; i < 2 * gf_field->get_error_code_capability(); i++)
+        std::cout<<s[i];
+    std::cout<<std::endl;
+
 }

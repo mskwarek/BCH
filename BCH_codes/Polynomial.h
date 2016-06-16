@@ -20,6 +20,7 @@ public:
     int get_code_length();
     int get_n();
     void read_p(int degree_ = 0);
+    void print_primitive_polynomial();
 };
 
 #endif //BCH_POLYNOMIAL_H

@@ -112,6 +112,9 @@ int main()
 	int correction_cap = std::stoi(codes_features["correction_capabilities"]);
 	int error_num = std::stoi(codes_features["number_of_errors"]);
 	Coder* c = new Coder(poly_degree, correction_cap);
+
+	c->print_primitive_polynomial();
+
 	get_random_data(c->get_k(), data);
 	c->encode_bch(data, bb);
 	c->code_polynomial(data, bb, recd);
@@ -127,6 +130,17 @@ int main()
 		int_print_polynomial("r(x)", "r(x)", recd, 0, c->get_code_length());
 	}
 	c->decode_bch(recd);
+
+
+	if (c->get_decoding_error_number(data, recd))
+		printf("There were %d decoding errors in message positions\n", c->get_decoding_error_number(data, recd));
+	else
+		printf("Succesful decoding\n");
+
+	c->print_sigma();
+	c->print_roots();
+	c->print_syndromes_features();
+	c->print_gf_features();
 
 
 	printf("Results:\n");

@@ -20,11 +20,6 @@ int GfField::get_k()
     return k;
 }
 
-int GfField::is_syn_error()
-{
-    return syn_error;
-}
-
 int GfField::get_error_code_capability()
 {
     return error_code_capability;
@@ -91,17 +86,7 @@ void GfField::generate_gf()
 }
 
 void GfField::gen_poly(int capability)
-/*
- * Compute the generator polynomial of a binary BCH code. Fist generate the
- * cycle sets modulo 2**m - 1, cycle[][] =  (i, 2*i, 4*i, ..., 2^l*i). Then
- * determine those cycle sets that contain integers in the set of (d-1)
- * consecutive integers {1..(d-1)}. The generator polynomial is calculated
- * as the product of linear factors of the form (x+alpha^i), for every i in
- * the above cycle sets.
- */
 {
-    register int	ii, jj, ll, kaux;
-    register int	root;
     int             zeros[1024];
     int size[1024];
 
@@ -120,7 +105,6 @@ void GfField::gen_poly(int capability)
     int_compute_generator_polynomial(zeros);
 }
 
-/* Generate cycle sets modulo n, n = 2**m - 1 */
 void GfField::int_generate_cycle_sets_mod_n(int *size)
 {
   int test;
@@ -129,10 +113,10 @@ void GfField::int_generate_cycle_sets_mod_n(int *size)
   
   size[0] = 1;
   size[1] = 1;
-  if (polynomial->get_degree() > 9)  {
-    printf("Computing cycle sets modulo %d\n", polynomial->get_n());
-    printf("(This may take some time)...\n");
-  }
+//  if (polynomial->get_degree() > 9)  {
+//    printf("Computing cycle sets modulo %d\n", polynomial->get_n());
+//    printf("(This may take some time)...\n");
+//  }
   do {
     ll = 0;
     int_generate_next_cycle_set(size, jj);
@@ -155,7 +139,7 @@ void GfField::int_generate_cycle_sets_mod_n(int *size)
   nocycles = jj;		/* number of cycle sets modulo n */  
 }
 
-/* Generate the jj-th cycle set */
+
 void GfField::int_generate_next_cycle_set(int *size, int cycle_set_index)
 {
   int ii = 0;
@@ -168,7 +152,6 @@ void GfField::int_generate_next_cycle_set(int *size, int cycle_set_index)
   } while (aux != cycle[cycle_set_index][0]);
 }
 
-/* Search for roots 1, 2, ..., d-1 in cycle sets */
 void GfField::int_search_for_cycle_sets_roots(int* size, int* zeros)
 {
   int  min[1024];
@@ -235,85 +218,7 @@ void GfField::print_generator_polynomial()
   printf("\n");
 }
 
-void GfField::form_syndromes(int *s, int *cx_coefficients)
+void GfField::print_primitive_polynomial()
 {
-    int t2 = 2 * error_code_capability;
-    /* first form the syndromes */
-    for (int i = 1; i <= t2; i++) {
-        s[i] = 0;
-        for (int j = 0; j < polynomial->get_code_length(); j++)
-            if (cx_coefficients[j] != 0)
-                s[i] ^= alpha_to[(i * j) % polynomial->get_n()];
-        if (s[i] != 0)
-            syn_error = 1; /* set error flag if non-zero syndrome */
-	/*
-	 * Note:    If the code is used only for ERROR DETECTION, then
-	 *          exit program here indicating the presence of errors.
-	 */
-        /* convert syndrome from polynomial form to index form  */
-        s[i] = index_of[s[i]];
-    }
+    polynomial->print_primitive_polynomial();
 }
-
-void GfField::print_syndromes_features(int *s)
-{
-  std::cout<<"t2 = "<<2 * error_code_capability<<std::endl;  
-  std::cout<<"S(x) = ";
-  for (int i=0; i < 2 * error_code_capability; i++)
-    std::cout<<s[i];
-  std::cout<<std::endl;
-  
-}
-
-void GfField::cos_tam(int *l, int u, int elp[][1024])
-{
-    l[u + 1] = l[u];
-    for (int i = 0; i <= l[u]; i++) {
-        elp[u + 1][i] = elp[u][i];
-        elp[u][i] = index_of[elp[u][i]];
-    }
-}
-
-void GfField::form_new_elp(int u, int q, int elp[][1024], int *l, int t2, int *x)
-{
-    /* form new elp(x) */
-    for (int i = 0; i < t2; i++)
-        elp[u + 1][i] = 0;
-    for (int i = 0; i <= l[q]; i++)
-        if (elp[q][i] != -1)
-	  elp[u + 1][i + u - q] =
-	    alpha_to[(x[u] + polynomial->get_n() - x[q] + elp[q][i]) % polynomial->get_n()];
-    for (int i = 0; i <= l[u]; i++) {
-        elp[u + 1][i] ^= elp[u][i];
-        elp[u][i] = index_of[elp[u][i]];
-    }
-}
-
-void GfField::form_discrepancy(int *s, int u, int *x, int *l, int error_location_polynomial[][1024])
-{
-    /* no discrepancy computed on last iteration */
-    if (s[u + 1] != -1)
-        x[u + 1] = alpha_to[s[u + 1]];
-    else
-        x[u + 1] = 0;
-    for (int i = 1; i <= l[u + 1]; i++)
-        if ((s[u + 1 - i] != -1) && (error_location_polynomial[u + 1][i] != 0))
-            x[u + 1] ^= alpha_to[(s[u + 1 - i]
-                                  + index_of[error_location_polynomial[u + 1][i]]) % polynomial->get_n()];
-    /* put d[u+1] into index form */
-    x[u + 1] = index_of[x[u + 1]];
-}
-
-/*
- * have now found q such that d[u]!=0 and
- * u_lu[q] is maximum
- */
-/* store degree of new elp polynomial */
-void GfField::store_new_elp(int *l, int q, int u)
-{
-    if (l[u] > l[q] + u - q)
-        l[u + 1] = l[u];
-    else
-        l[u + 1] = l[q] + u - q;
-}
-

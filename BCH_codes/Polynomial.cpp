@@ -24,6 +24,14 @@ int Polynomial::get_n()
     return n;
 }
 
+void Polynomial::print_primitive_polynomial()
+{
+    printf("p(x) = ");
+    for (int i = 0; i <= degree; i++)
+        printf("%1d", polynomial_form[i]);
+    printf("\n");
+}
+
 void Polynomial::read_p(int degree_)
 /*
  *	Read m, the degree of a primitive polynomial p(x) used to compute the
@@ -64,13 +72,10 @@ void Polynomial::read_p(int degree_)
     else if (degree == 18)	polynomial_form[7] = 1;
     else if (degree == 19)	polynomial_form[1] = polynomial_form[5] = polynomial_form[6] = 1;
     else if (degree == 20)	polynomial_form[3] = 1;
-    printf("p(x) = ");
+
     n = 1;
-    for (i = 0; i <= degree; i++) {
+    for (i = 0; i <= degree; i++)
         n *= 2;
-        printf("%1d", polynomial_form[i]);
-    }
-    printf("\n");
     n = n / 2 - 1;
     ninf = (n + 1) / 2 - 1;
     /*

@@ -6,19 +6,17 @@
 
 Coder::Coder(int polynomial_degree, int error_correct_capability)
 {
-    gf_field = new GfField(polynomial_degree);
+    gf_field = std::shared_ptr<GfField>(new GfField(polynomial_degree));
     gf_field->generate_gf();
     gf_field->gen_poly(error_correct_capability);
 
-    decoder = new Decoder(gf_field);
-    encoder = new Encoder(gf_field);
+    decoder = std::unique_ptr<Decoder>(new Decoder(gf_field));
+    encoder = std::unique_ptr<Encoder>(new Encoder(gf_field));
 }
 
 Coder::~Coder()
 {
-    delete gf_field;
-    delete encoder;
-    delete decoder;
+
 }
 
 int* Coder::get_generated_polynomial()
@@ -37,11 +35,6 @@ int Coder::get_code_length()
 }
 
 void Coder::encode_bch(int *source_data, int *coding_result)
-/*
- * Compute redundacy bb[], the coefficients of b(x). The redundancy
- * polynomial b(x) is the remainder after dividing x^(length-k)*data(x)
- * by the generator polynomial g(x).
- */
 {
     encoder->encode(source_data, coding_result);
 }
@@ -95,14 +88,37 @@ int Coder::get_decoding_error_number(int *data, int *recd)
     for (int i = gf_field->get_code_length() - gf_field->get_k(); i < gf_field->get_code_length(); i++)
         if (data[i - gf_field->get_code_length() + gf_field->get_k()] != recd[i])
             decerror++;
-    if (decerror)
-        printf("There were %d decoding errors in message positions\n", decerror);
-    else
-        printf("Succesful decoding\n");
     return decerror;
 }
 
 int Coder::get_k()
 {
   return gf_field->get_k();
+}
+
+void Coder::print_sigma()
+{
+    decoder->print_sigma();
+}
+
+void Coder::print_roots()
+{
+    decoder->print_roots();
+}
+
+void Coder::print_primitive_polynomial()
+{
+    gf_field->print_primitive_polynomial();
+}
+
+void Coder::print_syndromes_features()
+{
+    decoder->print_syndromes_features();
+}
+
+void Coder::print_gf_features()
+{
+    gf_field->print_generator_polynomial();
+    gf_field->print_error_code_capability();
+    gf_field->print_bch_code_features();
 }
