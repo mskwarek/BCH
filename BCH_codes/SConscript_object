@@ -1,0 +1,5 @@
+Import('env')
+
+common = env.Library('prog1', [env.Glob('*.cpp')])
+
+Return('common')

@@ -1,0 +1,9 @@
+Import('env')
+Import('common')
+LIBS =''
+common_libs = ['pthread', 'gtest']
+env.Append( LIBS = common_libs )
+
+test = env.Program('test', [ env.Glob('*.cpp'), common ], LIBS, LIBPATH='/opt/gtest/lib')
+
+Return('test')
