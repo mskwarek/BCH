@@ -1,5 +1,0 @@
-Import('env')
-
-common = env.Program('prog1', [env.Glob('*.cpp')])
-
-Return('common')
